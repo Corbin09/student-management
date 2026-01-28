@@ -1,13 +1,13 @@
 package com.university.repository;
 
 import com.university.model.Student;
-import java.util.List;
+import java.util.Collection;
 
 public interface StudentRepository {
 
-    void add(Student student);
+    void save(Student student);
 
-    List<Student> findAll();
+    boolean existsById(String id);
 
-    boolean existsById(int id);
+    Collection<Student> findAll();
 }
