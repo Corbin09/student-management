@@ -1,39 +1,41 @@
 package com.university.model;
 
+import java.util.Objects;
+
 public class Student {
-    private int id;
+    private String id;
     private String name;
     private String email;
     private double gpa;
 
-    public Student(int id, String name, String email, double gpa) {
+    public Student(String id, String name, String email, double gpa) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.gpa = gpa;
     }
 
-    public int getId() {
-        return id;
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public double getGpa() { return gpa; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student)) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public double getGpa() {
-        return gpa;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return String.format(
-                "ID: %d | Name: %s | Email: %s | GPA: %.2f",
-                id, name, email, gpa
-        );
+        return String.format("ID=%s | Name=%s | Email=%s | GPA=%.2f",
+                id, name, email, gpa);
     }
 }

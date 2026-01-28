@@ -1,73 +1,70 @@
 package com.university.app;
 
+import com.university.exception.InvalidStudentDataException;
 import com.university.repository.InMemoryStudentRepository;
 import com.university.service.StudentService;
-import com.university.model.Student;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class App {
 
+    private static final String RED = "\u001B[31m";
+    private static final String RESET = "\u001B[0m";
+
     public static void main(String[] args) {
 
-        StudentService studentService =
+        StudentService service =
                 new StudentService(new InMemoryStudentRepository());
 
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\n===== STUDENT MANAGEMENT =====");
-            System.out.println("1. Add Student");
-            System.out.println("2. List Students");
-            System.out.println("3. Exit");
-            System.out.print("Choose option: ");
+            System.out.println("""
+                    
+                    ==== STUDENT MANAGEMENT ====
+                    1. Add student
+                    2. Search student
+                    3. Top students
+                    4. Average GPA
+                    5. Exit
+                    """);
 
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // consume newline
+            System.out.print("Choose: ");
+            int choice = sc.nextInt();
+            sc.nextLine();
 
             try {
                 switch (choice) {
-                    case 1 -> addStudent(scanner, studentService);
-                    case 2 -> listStudents(studentService);
-                    case 3 -> {
-                        System.out.println("Goodbye!");
-                        return;
-                    }
-                    default -> System.out.println("Invalid option!");
+                    case 1 -> add(sc, service);
+                    case 2 -> search(sc, service);
+                    case 3 -> service.getTopStudents(3).forEach(System.out::println);
+                    case 4 -> System.out.println("Average GPA: " + service.getAverageGPA());
+                    case 5 -> System.exit(0);
+                    default -> System.out.println("Invalid option");
                 }
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
+            } catch (InvalidStudentDataException e) {
+                System.out.println(RED + "ERROR: " + e.getMessage() + RESET);
             }
         }
     }
 
-    private static void addStudent(Scanner scanner, StudentService service) {
+    private static void add(Scanner sc, StudentService service) {
         System.out.print("ID: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();
-
+        String id = sc.nextLine();
         System.out.print("Name: ");
-        String name = scanner.nextLine();
-
+        String name = sc.nextLine();
         System.out.print("Email: ");
-        String email = scanner.nextLine();
-
+        String email = sc.nextLine();
         System.out.print("GPA: ");
-        double gpa = scanner.nextDouble();
+        double gpa = sc.nextDouble();
 
         service.addStudent(id, name, email, gpa);
-        System.out.println("Student added successfully!");
+        System.out.println("Student added!");
     }
 
-    private static void listStudents(StudentService service) {
-        List<Student> students = service.listStudents();
-
-        if (students.isEmpty()) {
-            System.out.println("No students found.");
-            return;
-        }
-
-        students.forEach(System.out::println);
+    private static void search(Scanner sc, StudentService service) {
+        System.out.print("Search name: ");
+        String name = sc.nextLine();
+        service.searchStudents(name).forEach(System.out::println);
     }
 }

@@ -5,9 +5,11 @@ import java.util.List;
 
 public interface StudentRepository {
 
-    void add(Student student);
+    void save(Student student);
+
+    boolean existsById(String id);
 
     List<Student> findAll();
 
-    boolean existsById(int id);
+    void deleteById(String id);
 }

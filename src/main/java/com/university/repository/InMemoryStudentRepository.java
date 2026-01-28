@@ -1,25 +1,32 @@
 package com.university.repository;
 
 import com.university.model.Student;
-import java.util.ArrayList;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryStudentRepository implements StudentRepository {
 
-    private final List<Student> students = new ArrayList<>();
+    private final Map<String, Student> studentMap = new HashMap<>();
 
     @Override
-    public void add(Student student) {
-        students.add(student);
+    public void save(Student student) {
+        studentMap.put(student.getId(), student);
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        return studentMap.containsKey(id);
     }
 
     @Override
     public List<Student> findAll() {
-        return students;
+        return (List<Student>) studentMap.values();
     }
 
     @Override
-    public boolean existsById(int id) {
-        return students.stream().anyMatch(s -> s.getId() == id);
+    public void deleteById(String id) {
+        studentMap.remove(id);
     }
 }
