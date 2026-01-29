@@ -2,6 +2,7 @@ package com.university.app;
 
 import com.university.exception.InvalidStudentDataException;
 import com.university.repository.InMemoryStudentRepository;
+import com.university.service.StudentFileService;
 import com.university.service.StudentService;
 
 import java.util.Scanner;
@@ -26,7 +27,9 @@ public class App {
                     2. Search student
                     3. Top students
                     4. Average GPA
-                    5. Exit
+                    5. Export CSV
+                    6. Heavy Load Test
+                    7. Exit
                     """);
 
             System.out.print("Choose: ");
@@ -39,7 +42,20 @@ public class App {
                     case 2 -> search(sc, service);
                     case 3 -> service.getTopStudents(3).forEach(System.out::println);
                     case 4 -> System.out.println("Average GPA: " + service.getAverageGPA());
-                    case 5 -> System.exit(0);
+                    case 5 -> {
+                        try {
+                            StudentFileService.exportToCSV(service.getAllStudents());
+                            System.out.println("✅ Exported to students_export.csv");
+                        } catch (Exception e) {
+                            System.err.println("❌ Export failed: " + e.getMessage());
+                        }
+                    }
+                    case 6 -> {
+                        System.out.println("⚙️ Running heavy load test...");
+                        service.heavyLoadTest();
+                        System.out.println("✅ Heavy load test started (5 threads, 10.000 students)");
+                    }
+                    case 7 -> System.exit(0);
                     default -> System.out.println("Invalid option");
                 }
             } catch (InvalidStudentDataException e) {

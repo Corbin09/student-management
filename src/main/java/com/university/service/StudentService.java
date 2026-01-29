@@ -3,13 +3,22 @@ package com.university.service;
 import com.university.exception.InvalidStudentDataException;
 import com.university.model.Student;
 import com.university.repository.StudentRepository;
-
+import java.util.UUID;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class StudentService {
 
     private final StudentRepository repository;
+
+    public void importStudents(List<Student> students) {
+        for (Student s : students) {
+            if (!repository.existsById(s.getId())) {
+                repository.save(s);
+            }
+        }
+    }
+
 
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
@@ -60,4 +69,30 @@ public class StudentService {
                 .average()
                 .orElse(0.0);
     }
+
+    public List<Student> getAllStudents() {
+        return repository.findAll();
+    }
+
+
+    public void heavyLoadTest() {
+        Runnable task = () -> {
+            for (int i = 0; i < 2000; i++) {
+                String id = UUID.randomUUID().toString();
+                try {
+                    addStudent(
+                            id,
+                            "Student-" + id.substring(0, 5),
+                            id.substring(0,5) + "@mail.com",
+                            Math.random() * 10
+                    );
+                } catch (InvalidStudentDataException ignored) {}
+            }
+        };
+
+        for (int i = 0; i < 5; i++) {
+            new Thread(task).start();
+        }
+    }
+
 }

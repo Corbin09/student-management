@@ -2,13 +2,12 @@ package com.university.repository;
 
 import com.university.model.Student;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryStudentRepository implements StudentRepository {
 
-    private final Map<String, Student> studentMap = new HashMap<>();
+    private final Map<String, Student> studentMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public void save(Student student) {
@@ -22,8 +21,11 @@ public class InMemoryStudentRepository implements StudentRepository {
 
     @Override
     public List<Student> findAll() {
-        return (List<Student>) studentMap.values();
+        synchronized (studentMap) {
+            return new ArrayList<>(studentMap.values());
+        }
     }
+
 
     @Override
     public void deleteById(String id) {

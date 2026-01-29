@@ -38,4 +38,20 @@ public class Student {
         return String.format("ID=%s | Name=%s | Email=%s | GPA=%.2f",
                 id, name, email, gpa);
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setGpa(double gpa) {
+        this.gpa = gpa;
+    }
 }
